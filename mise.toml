@@ -15,7 +15,14 @@ run = "uv run baml-cli generate"
 
 [tasks.proxy]
 description = "Start LiteLLM proxy (run in separate terminal)"
-run = "uv run litellm --config litellm_config.yaml --port 4000"
+run = """
+if [ -f litellm_config.yaml ]; then
+  uv run litellm --config litellm_config.yaml --port 4000
+else
+  echo "Using default config (run 'mise run discover' to detect available models)"
+  uv run litellm --config litellm_config.default.yaml --port 4000
+fi
+"""
 
 [tasks.check]
 description = "Check LiteLLM connection"

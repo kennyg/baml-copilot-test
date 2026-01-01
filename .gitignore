@@ -13,6 +13,7 @@ baml_client/
 
 # Generated configs
 test_config.json
+litellm_config.yaml
 
 # IDE
 .vscode/

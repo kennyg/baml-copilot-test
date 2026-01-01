@@ -1,0 +1,49 @@
+# Default LiteLLM config for GitHub Copilot
+# Used for initial setup before running: mise run discover
+#
+# This config includes all known Copilot models.
+# After discovery, litellm_config.yaml will contain only available models.
+
+model_list:
+  - model_name: gpt-4o
+    litellm_params:
+      model: github_copilot/gpt-4o
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: gpt-4
+    litellm_params:
+      model: github_copilot/gpt-4
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: o1
+    litellm_params:
+      model: github_copilot/o1
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: claude-3.7-sonnet
+    litellm_params:
+      model: github_copilot/claude-3.7-sonnet
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: gemini-2.0-flash
+    litellm_params:
+      model: github_copilot/gemini-2.0-flash
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+general_settings:
+  master_key: "sk-baml-copilot-test"

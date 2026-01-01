@@ -20,17 +20,15 @@ BAML doesn't have native GitHub Copilot support because Copilot uses OAuth devic
 mise run setup
 
 # Start LiteLLM proxy (in a separate terminal)
+# First run uses default config and prompts for GitHub device flow auth
 mise run proxy
-# First run will prompt for GitHub device flow authentication
 
-# Discover available models and generate configs
+# Discover available models and generate configs (requires proxy running)
 mise run discover
 
-# Generate BAML client
-mise run generate
-
-# Run tests
-mise run test
+# Restart proxy to use discovered config, then:
+mise run generate  # Generate BAML client
+mise run test      # Run tests
 ```
 
 ## Available Tasks
