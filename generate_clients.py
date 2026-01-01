@@ -103,39 +103,47 @@ def test_model(model_name: str) -> tuple[bool, str | None]:
         return False, None
 
 
-# Known GitHub Copilot models (alias -> underlying model)
-KNOWN_COPILOT_MODELS = {
-    "gpt-4o": "github_copilot/gpt-4o",
-    "gpt-4": "github_copilot/gpt-4",
-    "gpt-4-turbo": "github_copilot/gpt-4-turbo",
-    "o1": "github_copilot/o1",
-    "o1-mini": "github_copilot/o1-mini",
-    "o3-mini": "github_copilot/o3-mini",
-    "claude-3.5-sonnet": "github_copilot/claude-3.5-sonnet",
-    "claude-3.7-sonnet": "github_copilot/claude-3.7-sonnet",
-    "claude-sonnet-4": "github_copilot/claude-sonnet-4",
-    "gemini-2.0-flash": "github_copilot/gemini-2.0-flash",
-}
+def get_configured_models() -> list[str]:
+    """Get list of models configured in the proxy."""
+    try:
+        response = httpx.get(
+            f"{PROXY_URL}/v1/models",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            timeout=10,
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return [m.get("id") for m in data.get("data", [])]
+    except Exception:
+        pass
+    return []
 
 
 def discover_models() -> dict[str, str]:
     """Discover which models are available on your GitHub Copilot subscription."""
 
-    print("Known GitHub Copilot models:")
-    for alias in KNOWN_COPILOT_MODELS:
-        print(f"  - {alias}")
+    # Get models from proxy config
+    configured = get_configured_models()
+
+    if not configured:
+        print("❌ No models found. Is the proxy running?")
+        return {}
+
+    print(f"Models configured in proxy ({len(configured)}):")
+    for model in configured:
+        print(f"  - {model}")
 
     print("\nTesting which models your subscription can access...\n")
 
     available = {}
 
-    for alias, model in KNOWN_COPILOT_MODELS.items():
+    for alias in configured:
         print(f"  {alias}... ", end="", flush=True)
-        # Test using the alias (what the proxy expects)
         works, actual = test_model(alias)
         if works:
             print(f"✅")
-            available[alias] = model
+            # Map alias to underlying github_copilot model
+            available[alias] = f"github_copilot/{alias}"
         else:
             print("❌")
 
