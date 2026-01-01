@@ -256,7 +256,11 @@ def main():
 
     # Check proxy is running
     try:
-        httpx.get(f"{PROXY_URL}/health", timeout=5)
+        httpx.get(
+            f"{PROXY_URL}/health",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            timeout=5,
+        )
     except httpx.ConnectError:
         print("❌ Error: LiteLLM proxy not running at localhost:4000")
         print("   Start it with: mise run proxy")

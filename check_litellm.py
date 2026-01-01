@@ -13,7 +13,11 @@ API_KEY = "sk-baml-copilot-test"
 def check_health():
     """Check if LiteLLM is running"""
     try:
-        resp = requests.get(f"{LITELLM_URL}/health", timeout=5)
+        resp = requests.get(
+            f"{LITELLM_URL}/health",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            timeout=5,
+        )
         print(f"✅ LiteLLM health check: {resp.status_code}")
         return True
     except requests.exceptions.ConnectionError:
