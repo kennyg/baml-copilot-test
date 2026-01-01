@@ -1,98 +1,117 @@
 # BAML + GitHub Copilot via LiteLLM
 
-This is a proof-of-concept for using GitHub Copilot models with BoundaryML's BAML framework via LiteLLM as a proxy.
+Use GitHub Copilot models with BoundaryML's BAML framework via LiteLLM proxy.
 
 ## Why This Approach?
 
-BAML doesn't have native GitHub Copilot support because Copilot uses OAuth device flow authentication (interactive login). LiteLLM handles this auth flow and exposes an OpenAI-compatible API that BAML can use via `openai-generic`.
+BAML doesn't have native GitHub Copilot support because Copilot uses OAuth device flow authentication. LiteLLM handles this auth flow and exposes an OpenAI-compatible API that BAML can use via `openai-generic`.
 
 ## Prerequisites
 
-- Python 3.10+
-- GitHub Copilot subscription (Individual, Business, or Enterprise)
-- BAML CLI (`pip install baml-py`)
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) - Python package manager
+- [mise](https://mise.jdx.dev/) - Task runner
+- GitHub Copilot subscription
 
-## Setup
-
-### 1. Create virtual environment
-
-```bash
-cd baml-copilot-test
-python -m venv .venv
-source .venv/bin/activate  # or `.venv\Scripts\activate` on Windows
-pip install -r requirements.txt
-```
-
-### 2. Generate BAML client
+## Quick Start
 
 ```bash
-baml-cli generate
+# Install dependencies
+mise run setup
+
+# Start LiteLLM proxy (in a separate terminal)
+mise run proxy
+# First run will prompt for GitHub device flow authentication
+
+# Discover available models and generate configs
+mise run discover
+
+# Generate BAML client
+mise run generate
+
+# Run tests
+mise run test
 ```
 
-### 3. Start LiteLLM proxy (Terminal 1)
+## Available Tasks
 
-```bash
-litellm --config litellm_config.yaml --port 4000
+| Task | Description |
+|------|-------------|
+| `mise run setup` | Install dependencies with uv |
+| `mise run proxy` | Start LiteLLM proxy on port 4000 |
+| `mise run discover` | Discover available models & generate configs |
+| `mise run generate` | Generate BAML client code |
+| `mise run test` | Run integration tests |
+| `mise run models` | List and test available models |
+| `mise run clean` | Remove generated files |
+
+## Model Discovery
+
+The `discover` command tests which GitHub Copilot models your subscription can access:
+
+```
+Known GitHub Copilot models:
+  - gpt-4o
+  - gpt-4
+  - o1
+  - claude-3.7-sonnet
+  - gemini-2.0-flash
+  ...
+
+Testing which models your subscription can access...
+
+  gpt-4o... ✅
+  claude-3.7-sonnet... ❌
+  ...
 ```
 
-On first run, you'll see:
+Models availability depends on your Copilot tier:
+- **Copilot Individual**: GPT-4o
+- **Copilot Pro/Pro+**: GPT-4o, Claude, O1, Gemini (varies)
+- **Copilot Business/Enterprise**: Configured by admin
+
+## Generated Files
+
+The `discover` command generates:
+
+| File | Purpose |
+|------|---------|
+| `litellm_config.yaml` | LiteLLM proxy configuration |
+| `baml_src/clients.baml` | BAML client definitions |
+| `test_config.json` | Test configuration |
+
+## Project Structure
+
 ```
-Please visit https://github.com/login/device and enter code XXXX-XXXX to authenticate.
+├── mise.toml              # Task definitions
+├── pyproject.toml         # Python dependencies (uv)
+├── litellm_config.yaml    # LiteLLM proxy config (generated)
+├── baml_src/
+│   ├── clients.baml       # BAML clients (generated)
+│   ├── functions.baml     # BAML functions
+│   └── generators.baml    # BAML generator config
+├── generate_clients.py    # Model discovery & config generator
+├── test_copilot.py        # Integration tests
+└── list_models.py         # Model listing utility
 ```
-
-Complete the device flow in your browser. The token is saved at `~/.config/litellm/github_copilot/`.
-
-### 4. Run tests (Terminal 2)
-
-```bash
-python test_copilot.py
-```
-
-## Available Clients
-
-| BAML Client | Copilot Model | Notes |
-|-------------|---------------|-------|
-| `CopilotGPT4o` | gpt-4o | Fast, good for most tasks |
-| `CopilotClaude` | claude-3.5-sonnet | Good for analysis/writing |
-| `CopilotO1` | o1 | Reasoning model (premium) |
-| `CopilotFallback` | GPT-4o → Claude | Auto-fallback on failure |
-
-## Enterprise Copilot
-
-If you're on GitHub Copilot Enterprise, the API endpoint differs. LiteLLM should handle this automatically, but if you see endpoint errors, check:
-
-```bash
-cat ~/.config/litellm/github_copilot/api-key.json | jq '.endpoints.api'
-```
-
-If it shows `api.enterprise.githubcopilot.com`, you may need to verify LiteLLM is using this endpoint.
 
 ## Troubleshooting
 
-### "missing Editor-Version header"
+### Device flow authentication
 
-Add headers to the LiteLLM call:
-```python
-extra_headers={
-    "editor-version": "vscode/1.85.1",
-    "Copilot-Integration-Id": "vscode-chat"
-}
+On first `mise run proxy`, complete the GitHub device flow:
 ```
-
-### Device flow timeout
-
-Check network connectivity. Known issue: https://github.com/BerriAI/litellm/issues/17065
+Please visit https://github.com/login/device and enter code XXXX-XXXX
+```
 
 ### Token refresh issues
 
 Delete cached tokens and re-authenticate:
 ```bash
 rm -rf ~/.config/litellm/github_copilot/
-litellm --config litellm_config.yaml --port 4000
+mise run proxy
 ```
 
-## Next Steps
+### Model not available
 
-If this works, we should:
-1. Open a docs PR to BoundaryML adding GitHub Copilot instructions
-2. Consider a native BAML provider if there's enough demand
+Run `mise run discover` to see which models your subscription supports. Check your Copilot settings at https://github.com/settings/copilot.
