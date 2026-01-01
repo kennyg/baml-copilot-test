@@ -103,37 +103,36 @@ def test_model(model_name: str) -> tuple[bool, str | None]:
         return False, None
 
 
-# Known GitHub Copilot models to try if API doesn't list them
-KNOWN_COPILOT_MODELS = [
-    "github_copilot/gpt-4o",
-    "github_copilot/gpt-4",
-    "github_copilot/gpt-4-turbo",
-    "github_copilot/o1",
-    "github_copilot/o1-mini",
-    "github_copilot/o3-mini",
-    "github_copilot/claude-3.5-sonnet",
-    "github_copilot/claude-3.7-sonnet",
-    "github_copilot/claude-sonnet-4",
-    "github_copilot/gemini-2.0-flash",
-]
+# Known GitHub Copilot models (alias -> underlying model)
+KNOWN_COPILOT_MODELS = {
+    "gpt-4o": "github_copilot/gpt-4o",
+    "gpt-4": "github_copilot/gpt-4",
+    "gpt-4-turbo": "github_copilot/gpt-4-turbo",
+    "o1": "github_copilot/o1",
+    "o1-mini": "github_copilot/o1-mini",
+    "o3-mini": "github_copilot/o3-mini",
+    "claude-3.5-sonnet": "github_copilot/claude-3.5-sonnet",
+    "claude-3.7-sonnet": "github_copilot/claude-3.7-sonnet",
+    "claude-sonnet-4": "github_copilot/claude-sonnet-4",
+    "gemini-2.0-flash": "github_copilot/gemini-2.0-flash",
+}
 
 
 def discover_models() -> dict[str, str]:
     """Discover which models are available on your GitHub Copilot subscription."""
 
     print("Known GitHub Copilot models:")
-    for model in KNOWN_COPILOT_MODELS:
-        alias = model.replace("github_copilot/", "")
+    for alias in KNOWN_COPILOT_MODELS:
         print(f"  - {alias}")
 
     print("\nTesting which models your subscription can access...\n")
 
     available = {}
 
-    for model in KNOWN_COPILOT_MODELS:
-        alias = model.replace("github_copilot/", "")
+    for alias, model in KNOWN_COPILOT_MODELS.items():
         print(f"  {alias}... ", end="", flush=True)
-        works, actual = test_model(model)
+        # Test using the alias (what the proxy expects)
+        works, actual = test_model(alias)
         if works:
             print(f"✅")
             available[alias] = model

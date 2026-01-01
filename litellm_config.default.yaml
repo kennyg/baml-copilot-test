@@ -1,7 +1,7 @@
 # Default LiteLLM config for GitHub Copilot
 # Used for initial setup before running: mise run discover
 #
-# This config includes all known Copilot models.
+# Includes all known Copilot models for discovery.
 # After discovery, litellm_config.yaml will contain only available models.
 
 model_list:
@@ -21,6 +21,14 @@ model_list:
         Editor-Plugin-Version: "copilot/1.0.0"
         Copilot-Integration-Id: "vscode-chat"
 
+  - model_name: gpt-4-turbo
+    litellm_params:
+      model: github_copilot/gpt-4-turbo
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
   - model_name: o1
     litellm_params:
       model: github_copilot/o1
@@ -29,9 +37,41 @@ model_list:
         Editor-Plugin-Version: "copilot/1.0.0"
         Copilot-Integration-Id: "vscode-chat"
 
+  - model_name: o1-mini
+    litellm_params:
+      model: github_copilot/o1-mini
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: o3-mini
+    litellm_params:
+      model: github_copilot/o3-mini
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: claude-3.5-sonnet
+    litellm_params:
+      model: github_copilot/claude-3.5-sonnet
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
   - model_name: claude-3.7-sonnet
     litellm_params:
       model: github_copilot/claude-3.7-sonnet
+      extra_headers:
+        Editor-Version: "vscode/1.95.0"
+        Editor-Plugin-Version: "copilot/1.0.0"
+        Copilot-Integration-Id: "vscode-chat"
+
+  - model_name: claude-sonnet-4
+    litellm_params:
+      model: github_copilot/claude-sonnet-4
       extra_headers:
         Editor-Version: "vscode/1.95.0"
         Editor-Plugin-Version: "copilot/1.0.0"
