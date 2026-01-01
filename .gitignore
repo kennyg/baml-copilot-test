@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# BAML generated
+baml_client/
+
+# Environment
+.env
+.env.local
+
+# Generated configs
+test_config.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

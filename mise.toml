@@ -1,0 +1,34 @@
+[tools]
+python = "3.12"
+
+[tasks.setup]
+description = "Create venv and install dependencies"
+run = "uv sync"
+
+[tasks.discover]
+description = "Discover available models and generate clients"
+run = "uv run python generate_clients.py"
+
+[tasks.generate]
+description = "Generate BAML client"
+run = "uv run baml-cli generate"
+
+[tasks.proxy]
+description = "Start LiteLLM proxy (run in separate terminal)"
+run = "uv run litellm --config litellm_config.yaml --port 4000"
+
+[tasks.check]
+description = "Check LiteLLM connection"
+run = "uv run python check_litellm.py"
+
+[tasks.test]
+description = "Run full BAML tests"
+run = "uv run python test_copilot.py"
+
+[tasks.models]
+description = "List available models from LiteLLM proxy"
+run = "uv run python list_models.py"
+
+[tasks.clean]
+description = "Clean generated files"
+run = "rm -rf baml_client/ .venv/ __pycache__/"
