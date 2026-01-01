@@ -11,6 +11,9 @@ import os
 import sys
 from pathlib import Path
 
+# Disable verbose BAML logging
+os.environ["BAML_LOG"] = "off"
+
 # Set the API key for LiteLLM
 os.environ["LITELLM_API_KEY"] = "sk-baml-copilot-test"
 
